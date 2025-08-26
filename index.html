@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ecology Report Data Capture Tool</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        .section-card {
+            transition: all 0.3s ease-in-out;
+        }
+        .section-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
+        .data-entry-card {
+            border-left: 4px solid #3b82f6; /* blue-500 */
+        }
+         /* Custom modal styles */
+        .modal-backdrop {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 50;
+        }
+        .modal-content {
+            background-color: white;
+            padding: 2rem;
+            border-radius: 0.5rem;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+            max-width: 90%;
+            width: 500px;
+        }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-800">
+
+    <!-- Main Container -->
+    <div id="app" class="container mx-auto p-4 md:p-8 max-w-7xl">
+
+        <!-- Header -->
+        <header class="text-center mb-10">
+            <h1 class="text-4xl font-bold text-gray-900">Ecology Report Data Capture Tool</h1>
+            <p class="text-lg text-gray-600 mt-2">A tool for efficient desk and field data collection.</p>
+        </header>
+
+        <!-- Main Menu (Home Screen) -->
+        <div id="main-menu" class="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <!-- Desk Research Card -->
+            <div onclick="showView('desk-research')" class="section-card bg-white p-8 rounded-lg shadow-md cursor-pointer border border-gray-200">
+                <div class="flex items-center mb-4">
+                    <svg class="w-12 h-12 text-blue-500 mr-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path></svg>
+                    <h2 class="text-2xl font-semibold">Desk Research</h2>
+                </div>
+                <p class="text-gray-600">Capture background information, legislation, policy, methodology, impact assessments, and monitoring plans.</p>
+            </div>
+            <!-- Field Survey Card -->
+            <div onclick="showView('field-survey')" class="section-card bg-white p-8 rounded-lg shadow-md cursor-pointer border border-gray-200">
+                 <div class="flex items-center mb-4">
+                    <svg class="w-12 h-12 text-green-500 mr-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                    <h2 class="text-2xl font-semibold">Field Survey</h2>
+                </div>
+                <p class="text-gray-600">Record baseline ecological conditions including location, habitats, flora, fauna, and invasive species directly from the field.</p>
+            </div>
+        </div>
+
+        <!-- Desk Research View -->
+        <div id="desk-research" class="hidden bg-white p-8 rounded-lg shadow-lg border border-gray-200">
+            <button onclick="showView('main-menu')" class="mb-6 bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 transition">← Back to Menu</button>
+            <h2 class="text-3xl font-bold mb-6 border-b pb-4">Desk Research Data</h2>
+            
+            <!-- Sections Container -->
+            <div class="space-y-8">
+                <!-- 1. Introduction -->
+                <div>
+                    <h3 class="text-xl font-semibold mb-2">1. Introduction</h3>
+                    <div class="space-y-4 pl-4">
+                        <textarea id="dr-background" class="w-full p-2 border rounded-md" rows="5" placeholder="1.1. Background: Project context, history, etc."></textarea>
+                        <textarea id="dr-aims" class="w-full p-2 border rounded-md" rows="5" placeholder="1.2. Aims and Objectives: Outline the baseline ecological conditions, identify high biodiversity areas, highlight threats, recommend protection measures and timescales."></textarea>
+                    </div>
+                </div>
+
+                <!-- 2. Legislation and Policy -->
+                <div>
+                    <h3 class="text-xl font-semibold mb-2">2. Relevant Legislation and Policy</h3>
+                     <div class="space-y-4 pl-4">
+                        <textarea id="dr-legislation-international" class="w-full p-2 border rounded-md" rows="6" placeholder="2.1. International Legislation: EU Habitats Directive, EU Birds Directive, etc."></textarea>
+                        <textarea id="dr-legislation-national" class="w-full p-2 border rounded-md" rows="6" placeholder="2.2. National Legislation & Policy: Irish Wildlife Acts, Water Framework Directive, National Biodiversity Action Plan, Local Plans, etc."></textarea>
+                    </div>
+                </div>
+
+                <!-- 3. Methodology -->
+                <div>
+                    <h3 class="text-xl font-semibold mb-2">3. Methodology</h3>
+                     <div class="space-y-4 pl-4">
+                        <textarea id="dr-method-scope" class="w-full p-2 border rounded-md" rows="4" placeholder="3.1. Scope of Project"></textarea>
+                        <textarea id="dr-method-desk" class="w-full p-2 border rounded-md" rows="4" placeholder="3.2. Desk Study: Sources consulted, data repositories, etc."></textarea>
+                        <textarea id="dr-method-field" class="w-full p-2 border rounded-md" rows="4" placeholder="3.3. Field Surveys: Survey types, dates, personnel, limitations."></textarea>
+                    </div>
+                </div>
+
+                 <!-- 5. Impact Assessment & Recommendations -->
+                <div>
+                    <h3 class="text-xl font-semibold mb-2">5. Impact Assessment & Recommendations</h3>
+                     <div class="space-y-4 pl-4">
+                        <textarea id="dr-impact-id" class="w-full p-2 border rounded-md" rows="4" placeholder="5.1. Identification of High Biodiversity Areas"></textarea>
+                        <textarea id="dr-impact-threats" class="w-full p-2 border rounded-md" rows="4" placeholder="5.2. Potential Threats (e.g., Eutrophication, Invasive Species)"></textarea>
+                        <textarea id="dr-impact-mitigation" class="w-full p-2 border rounded-md" rows="6" placeholder="5.3. Recommended Protection and Mitigation Measures"></textarea>
+                        <textarea id="dr-impact-timetable" class="w-full p-2 border rounded-md" rows="4" placeholder="5.4. Implementation Timetable"></textarea>
+                    </div>
+                </div>
+
+                <!-- 6. Monitoring -->
+                <div>
+                    <h3 class="text-xl font-semibold mb-2">6. Monitoring</h3>
+                     <div class="space-y-4 pl-4">
+                        <textarea id="dr-monitoring-baseline" class="w-full p-2 border rounded-md" rows="3" placeholder="6.1. Baseline Data Summary"></textarea>
+                        <textarea id="dr-monitoring-targets" class="w-full p-2 border rounded-md" rows="3" placeholder="6.2. Monitoring Targets"></textarea>
+                        <textarea id="dr-monitoring-schedule" class="w-full p-2 border rounded-md" rows="3" placeholder="6.3. Proposed Monitoring Schedule"></textarea>
+                    </div>
+                </div>
+
+                 <!-- 7. References -->
+                <div>
+                    <h3 class="text-xl font-semibold mb-2">7. References & Further Reading</h3>
+                     <div class="space-y-4 pl-4">
+                        <textarea id="dr-references" class="w-full p-2 border rounded-md" rows="8" placeholder="List all references and suggested further reading here."></textarea>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Field Survey View -->
+        <div id="field-survey" class="hidden bg-white p-8 rounded-lg shadow-lg border border-gray-200">
+            <button onclick="showView('main-menu')" class="mb-6 bg-green-500 text-white px-4 py-2 rounded-md hover:bg-green-600 transition">← Back to Menu</button>
+            <h2 class="text-3xl font-bold mb-6 border-b pb-4">Field Survey Data</h2>
+            
+            <div class="space-y-8">
+                <!-- 4.1 Project Area Location -->
+                <div>
+                    <h3 class="text-xl font-semibold mb-2">4.1. Project Area Location</h3>
+                    <div class="pl-4">
+                        <textarea id="fs-location-desc" class="w-full p-2 border rounded-md" rows="4" placeholder="General description of the project area, access points, and context. Include map reference if available."></textarea>
+                        <p class="text-sm text-gray-500 mt-2">Add specific points of interest (e.g., nests, rare plants) as 'Flora' or 'Fauna' entries with captured GPS coordinates.</p>
+                    </div>
+                </div>
+
+                <!-- Dynamic Data Entry Sections -->
+                <div id="dynamic-sections"></div>
+            </div>
+        </div>
+
+        <!-- Floating Action Buttons -->
+        <div class="fixed bottom-8 right-8 flex flex-col space-y-4">
+             <button id="save-btn" onclick="saveData()" class="bg-blue-600 text-white px-6 py-3 rounded-full shadow-lg hover:bg-blue-700 transition transform hover:scale-105 flex items-center">
+                <svg class="w-6 h-6 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4"></path></svg>
+                Save
+            </button>
+            <button id="export-btn" onclick="exportData()" class="bg-gray-700 text-white px-6 py-3 rounded-full shadow-lg hover:bg-gray-800 transition transform hover:scale-105 flex items-center">
+                <svg class="w-6 h-6 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
+                Export
+            </button>
+        </div>
+
+    </div>
+
+    <!-- Modal for showing messages -->
+    <div id="message-modal" class="modal-backdrop hidden">
+        <div class="modal-content">
+            <p id="modal-text" class="text-center text-lg"></p>
+            <button onclick="closeModal()" class="mt-4 w-full bg-blue-500 text-white py-2 rounded-md hover:bg-blue-600 transition">Close</button>
+        </div>
+    </div>
+    
+    <!-- Modal for exported data -->
+    <div id="export-modal" class="modal-backdrop hidden">
+        <div class="modal-content max-w-4xl">
+            <h3 class="text-2xl font-bold mb-4">Exported Report Data</h3>
+            <textarea id="export-textarea" class="w-full h-96 p-2 border rounded-md font-mono text-sm bg-gray-100" readonly></textarea>
+            <div class="mt-4 flex justify-end space-x-2">
+                <button onclick="copyToClipboard()" class="bg-green-500 text-white py-2 px-4 rounded-md hover:bg-green-600 transition">Copy to Clipboard</button>
+                <button onclick="closeExportModal()" class="bg-gray-500 text-white py-2 px-4 rounded-md hover:bg-gray-600 transition">Close</button>
+            </div>
+        </div>
+    </div>
+
+
+<script>
+    // --- Pre-defined Data Lists for Irish Ecology ---
+    const irishData = {
+        habitats: ['Oak Woodland', 'Wet Heath', 'Blanket Bog', 'Calcareous Grassland', 'Machair', 'Turlough', 'Raised Bog', 'Fen', 'Saltmarsh', 'Sand Dune'],
+        flora: ['Bluebell', "St. Patrick's Cabbage", 'Killarney Fern', 'Bog Asphodel', 'Common Gorse', 'Heather (Ling)', 'Sessile Oak', 'Holly', 'Bilberry', 'Foxglove', 'Primrose'],
+        'fauna-birds': ['Robin', 'Wren', 'Blackbird', 'Peregrine Falcon', 'Meadow Pipit', 'Stonechat', 'Chough', 'Corncrake', 'Hen Harrier', 'Kingfisher', 'Barn Owl'],
+        'fauna-mammals': ['Red Deer', 'Pine Marten', 'Red Squirrel', 'Badger', 'Otter', 'Stoat', 'Pygmy Shrew', "Leisler's Bat", 'Common Seal', 'Grey Seal'],
+        'fauna-invertebrates': ['Green Hairstreak Butterfly', 'Peacock Butterfly', 'Marsh Fritillary', 'Large Red Damselfly', 'White-tailed Bumblebee', 'Freshwater Pearl Mussel', 'Garden Snail'],
+        'invasive-species': ['Rhododendron ponticum', 'Japanese Knotweed', 'Giant Hogweed', 'Himalayan Balsam', 'Grey Squirrel', 'American Mink', 'Zebra Mussel', 'New Zealand Flatworm']
+    };
+
+    // --- State Management ---
+    const views = ['main-menu', 'desk-research', 'field-survey'];
+    const fieldSections = [
+        { id: 'habitats', title: '4.2. Habitats' },
+        { id: 'flora', title: '4.3. Flora' },
+        { id: 'fauna-birds', title: '4.4.1. Birds' },
+        { id: 'fauna-mammals', title: '4.4.2. Mammals' },
+        { id: 'fauna-invertebrates', title: '4.4.3. Invertebrates' },
+        { id: 'invasive-species', title: '4.5. Invasive Species' }
+    ];
+
+    // --- View Navigation ---
+    function showView(viewId) {
+        views.forEach(id => {
+            const el = document.getElementById(id);
+            if (id === viewId) {
+                el.classList.remove('hidden');
+            } else {
+                el.classList.add('hidden');
+            }
+        });
+    }
+
+    // --- Dynamic Field Survey Section Builder ---
+    function buildFieldSections() {
+        const container = document.getElementById('dynamic-sections');
+        container.innerHTML = ''; // Clear existing
+        fieldSections.forEach(section => {
+            const sectionDiv = document.createElement('div');
+            sectionDiv.innerHTML = `
+                <div class="flex justify-between items-center mb-2">
+                    <h3 class="text-xl font-semibold">${section.title}</h3>
+                    <button onclick="addEntry('${section.id}')" class="bg-green-500 text-white px-3 py-1 text-sm rounded-md hover:bg-green-600 transition">+ Add Entry</button>
+                </div>
+                <div id="${section.id}-entries" class="space-y-4 pl-4">
+                    <!-- Dynamic entries will be added here -->
+                </div>
+            `;
+            container.appendChild(sectionDiv);
+        });
+    }
+
+    function addEntry(sectionId) {
+        const entryContainer = document.getElementById(`${sectionId}-entries`);
+        const entryId = `${sectionId}-${Date.now()}`;
+        const entryDiv = document.createElement('div');
+        entryDiv.id = entryId;
+        entryDiv.className = 'data-entry-card bg-gray-50 p-4 rounded-md shadow-sm relative';
+
+        const dataList = irishData[sectionId] || [];
+        const options = dataList.map(item => `<option value="${item}">${item}</option>`).join('');
+
+        entryDiv.innerHTML = `
+            <button onclick="removeEntry('${entryId}')" class="absolute top-2 right-2 text-gray-400 hover:text-red-500 text-2xl font-bold">&times;</button>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-2">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700">Type/Species</label>
+                    <select class="w-full p-2 border rounded-md bg-white" onchange="checkOther(this, '${entryId}')">
+                        <option value="">-- Select --</option>
+                        ${options}
+                        <option value="other">Other (Specify)</option>
+                    </select>
+                    <input type="text" id="other-${entryId}" class="w-full p-2 border rounded-md mt-1 hidden" placeholder="Specify other type/species">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700">Count</label>
+                    <input type="number" class="w-full p-2 border rounded-md" placeholder="e.g., 5" min="0">
+                </div>
+            </div>
+            <label class="block text-sm font-medium text-gray-700 mt-2">Description / Condition / Notes</label>
+            <textarea class="w-full p-2 border rounded-md mb-2" rows="3" placeholder="e.g., Healthy adult, observed foraging..."></textarea>
+            <div class="flex flex-wrap items-center gap-2">
+                <input type="file" accept="image/*" class="text-sm">
+                <button onclick="getGPS('${entryId}')" class="bg-blue-500 text-white px-3 py-1 text-sm rounded-md hover:bg-blue-600 transition">Get GPS</button>
+                <input type="text" class="gps-coords p-1 border rounded-md text-sm" placeholder="Lat, Lon" readonly>
+            </div>
+        `;
+        entryContainer.appendChild(entryDiv);
+    }
+    
+    function checkOther(selectElement, entryId) {
+        const otherInput = document.getElementById(`other-${entryId}`);
+        if (selectElement.value === 'other') {
+            otherInput.classList.remove('hidden');
+        } else {
+            otherInput.classList.add('hidden');
+        }
+    }
+
+    function removeEntry(entryId) {
+        document.getElementById(entryId).remove();
+    }
+
+    // --- Geolocation ---
+    function getGPS(entryId) {
+        const coordsInput = document.querySelector(`#${entryId} .gps-coords`);
+        if (!navigator.geolocation) {
+            coordsInput.value = 'GPS not supported';
+            return;
+        }
+        coordsInput.value = 'Getting coords...';
+        navigator.geolocation.getCurrentPosition(
+            (position) => {
+                const lat = position.coords.latitude.toFixed(6);
+                const lon = position.coords.longitude.toFixed(6);
+                coordsInput.value = `${lat}, ${lon}`;
+            },
+            () => {
+                coordsInput.value = 'Unable to retrieve';
+            }
+        );
+    }
+    
+    // --- Data Handling (Save/Export) ---
+    function showModal(message) {
+        document.getElementById('modal-text').innerText = message;
+        document.getElementById('message-modal').classList.remove('hidden');
+    }
+
+    function closeModal() {
+        document.getElementById('message-modal').classList.add('hidden');
+    }
+    
+    function closeExportModal() {
+        document.getElementById('export-modal').classList.add('hidden');
+    }
+
+    function saveData() {
+        // In a real app, this would send data to a server or save to localStorage.
+        showModal('Data saved successfully! (Prototype)');
+    }
+
+    function exportData() {
+        let reportText = "ECOLOGY REPORT DATA\n=====================\n\n";
+
+        // Desk Research Sections
+        reportText += "## DESK RESEARCH ##\n\n";
+        const deskSections = {
+            "1. INTRODUCTION": [`1.1. Background:\n${document.getElementById('dr-background').value}`, `1.2. Aims and Objectives:\n${document.getElementById('dr-aims').value}`],
+            "2. RELEVANT LEGISLATION AND POLICY": [`2.1. International Legislation:\n${document.getElementById('dr-legislation-international').value}`, `2.2. National Legislation & Policy:\n${document.getElementById('dr-legislation-national').value}`],
+            "3. METHODOLOGY": [`3.1. Scope of Project:\n${document.getElementById('dr-method-scope').value}`, `3.2. Desk Study:\n${document.getElementById('dr-method-desk').value}`, `3.3. Field Surveys:\n${document.getElementById('dr-method-field').value}`],
+            "5. IMPACT ASSESSMENT & RECOMMENDATIONS": [`5.1. Identification of High Biodiversity Areas:\n${document.getElementById('dr-impact-id').value}`, `5.2. Potential Threats:\n${document.getElementById('dr-impact-threats').value}`, `5.3. Recommended Protection and Mitigation Measures:\n${document.getElementById('dr-impact-mitigation').value}`, `5.4. Implementation Timetable:\n${document.getElementById('dr-impact-timetable').value}`],
+            "6. MONITORING": [`6.1. Baseline Data:\n${document.getElementById('dr-monitoring-baseline').value}`, `6.2. Monitoring Targets:\n${document.getElementById('dr-monitoring-targets').value}`, `6.3. Proposed Monitoring Schedule:\n${document.getElementById('dr-monitoring-schedule').value}`],
+            "7. REFERENCES": [`${document.getElementById('dr-references').value}`]
+        };
+        for (const [title, content] of Object.entries(deskSections)) {
+            reportText += `${title}\n${content.join('\n\n')}\n\n`;
+        }
+
+        // Field Survey Sections
+        reportText += "## FIELD SURVEY ##\n\n";
+        reportText += `4.1. Project Area Location Description:\n${document.getElementById('fs-location-desc').value}\n\n`;
+
+        fieldSections.forEach(section => {
+            reportText += `--- ${section.title.toUpperCase()} ---\n`;
+            const entries = document.querySelectorAll(`#${section.id}-entries .data-entry-card`);
+            if (entries.length === 0) {
+                reportText += "No entries recorded.\n\n";
+            } else {
+                entries.forEach((entry, index) => {
+                    const select = entry.querySelector('select');
+                    let name = select.value;
+                    if (name === 'other') {
+                        name = `Other: ${entry.querySelector('input[type="text"]').value}`;
+                    }
+                    const count = entry.querySelector('input[type="number"]').value;
+                    const desc = entry.querySelector('textarea').value;
+                    const gps = entry.querySelector('.gps-coords').value;
+                    const photo = entry.querySelector('input[type="file"]').files[0];
+                    
+                    reportText += `Entry #${index + 1}:\n`;
+                    reportText += `  - Type/Species: ${name || 'N/A'}\n`;
+                    reportText += `  - Count: ${count || 'N/A'}\n`;
+                    reportText += `  - Description/Notes: ${desc || 'N/A'}\n`;
+                    reportText += `  - GPS: ${gps || 'N/A'}\n`;
+                    reportText += `  - Photo: ${photo ? photo.name : 'No photo attached'}\n\n`;
+                });
+            }
+        });
+        
+        document.getElementById('export-textarea').value = reportText;
+        document.getElementById('export-modal').classList.remove('hidden');
+    }
+    
+    function copyToClipboard() {
+        const textarea = document.getElementById('export-textarea');
+        textarea.select();
+        try {
+            document.execCommand('copy');
+            showModal('Copied to clipboard!');
+        } catch (err) {
+            showModal('Failed to copy.');
+        }
+    }
+
+    // --- Initialization ---
+    document.addEventListener('DOMContentLoaded', () => {
+        buildFieldSections();
+    });
+
+</script>
+</body>
+</html>
